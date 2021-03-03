@@ -1,4 +1,5 @@
 # Rival Regions Region Cost by suicaed
+### Warning! Working now only with Russian interface.
 
 ## Setup
 1. Install TamperMonkey or another similar script-runner.
@@ -18,5 +19,4 @@
 ### 03.03.2021
 **Version 1.0.0** released
 - "Get Price" button is available at region page, below building counts;
-- all info is available in console, after button was pressed;
-- only Russian language support.
+- all info is available in console, after button was pressed.
