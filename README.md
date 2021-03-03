@@ -1,4 +1,4 @@
-# Rival Regions Message Sender by suicaed
+# Rival Regions Region Cost by suicaed
 
 ## Setup
 1. Install TamperMonkey or another similar script-runner.
