@@ -16,7 +16,7 @@
 
 ## Updates
 
-### 03.03.2021
+### 15.08.2021
 **Version 1.0.1** released
 - scripts works now on page load;
 - price is outputed in browser's dialog window instead of console
