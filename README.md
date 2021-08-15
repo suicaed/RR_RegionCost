@@ -18,9 +18,9 @@
 
 ### 15.08.2021
 **Version 1.0.1** released
-- scripts works now on page load;
-- price is outputed in browser's dialog window instead of console
-- added possibility to copy cost's info to the clipboard
+- now script works on page load;
+- price is outputted in browser's dialog window instead of console;
+- added possibility to copy cost's info to the clipboard.
 
 ### 03.03.2021
 **Version 1.0.0** released
