@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RR Region Cost
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description
 // @author       suicaed
 // @updateURL    https://github.com/suicaed/RR_RegionCost/raw/main/script.user.js
@@ -16,6 +16,9 @@ const INDEX_OIL = 3;
 const INDEX_ORE = 4;
 const INDEX_URANIUM = 11;
 const INDEX_DIAMONDS = 15;
+
+let resultTextTemplate = 'RR_RegionCost by suicaed v1.0.1\n\n';
+let resultText = 'RR_RegionCost by suicaed v1.0.1\n\n';
 
 (function () {
     'use strict';
@@ -47,15 +50,35 @@ function addButton() {
     btn.setAttribute('title', '');
     btn.style.color = 'red';
     btn.addEventListener('click', async () => {
-        console.clear();
         const res = calcResources();
         let cost = res.money;
+        resultText += '\n\nResources market price: ';
         cost += await getMarketPrice(INDEX_GOLD) * res.gold;
         cost += await getMarketPrice(INDEX_OIL) * res.oil;
         cost += await getMarketPrice(INDEX_ORE) * res.ore;
         cost += await getMarketPrice(INDEX_URANIUM) * res.uranium;
         cost += await getMarketPrice(INDEX_DIAMONDS) * res.diamonds;
-        console.log(`Итоговая стоимость региона: ${(cost / 1e+12).toFixed(3)}T`);
+
+        var text = `Cost of the region: ${(cost / 1e+12).toFixed(3)}T`;
+        resultText += `\n\n${text}`;
+        const confirmResult = confirm(`${text}\nPress "OK" button to copy extended info to the clipboard.`);
+        if (confirmResult) {
+            try {
+                const clipboardPermition = await navigator.permissions.query({ name: 'clipboard-write' });
+                if (clipboardPermition.state === 'granted' || clipboardPermition.state === 'prompt') {
+                    try {
+                        const writeTextResult = navigator.clipboard.writeText(resultText);
+                        if (writeTextResult) {
+                            resultText = resultTextTemplate;
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
     });
 
     wrapper.appendChild(btn);
@@ -70,22 +93,22 @@ async function getMarketPrice(index) {
     let name;
     switch (index) {
         case INDEX_OIL:
-            name = 'нефти';
+            name = 'oil';
             break;
         case INDEX_ORE:
-            name = 'руды';
+            name = 'ore';
             break;
         case INDEX_URANIUM:
-            name = 'урана';
+            name = 'uranium';
             break;
         case INDEX_DIAMONDS:
-            name = 'алмазов';
+            name = 'diamonds';
             break;
         case INDEX_GOLD:
-            name = 'золота';
+            name = 'gold';
             break;
     }
-    console.log(`Рыночная цена ${name}: ${average}`);
+    resultText += `\n• ${name}: ${average}`;
     return Number(average);
 }
 
@@ -110,7 +133,7 @@ function calcResources() {
     const hfound = wrapper.match(/Жилой фонд\: (?<hfound>\d+)/).groups.hfound;
     const gas = wrapper.match(/Заправочная станция\: (?<gas>\d+)/) ? wrapper.match(/Заправочная станция\: (?<aero>\d+)/).groups.gas : 0;
 
-    console.log(`Постройки региона: Госпиталь ${hospital}, Военная база ${mbase}, Школа ${school}, ПВО ${missile}, Порт ${port}, Электростанция ${electro}, Космодром ${cosmo}, Аэропорт ${aero}, Жилой фонд ${hfound}`);
+    resultText += `Region buildings:\n• hospital ${hospital}\n• military base ${mbase} \n• school ${school} \n• missile ${missile}\n• port ${port}\n• powerplant ${electro}\n• cosmodrome ${cosmo}\n• aeroport ${aero}\n• house found ${hfound}`;
 
     for (let i = 1; i <= hospital; i++) {
         money += Math.round(Math.pow(i * 300, 1.5));
@@ -182,7 +205,7 @@ function calcResources() {
         ore += Math.round(Math.pow(i * 9, 1.5));
     }
 
-    console.log(`Всего ресурсов затрачено:\nРубли ${(money / 1e+12).toFixed(3)}T\nЗолото ${(gold / 1e+12).toFixed(3)}T\nНефть ${(oil / 1e+9).toFixed(3)}ККК\nРуда ${(ore / 1e+9).toFixed(3)}ККК\nАлмазы ${(diamonds / 1e+3).toFixed(3)}К\nУран ${(uranium / 1e+6).toFixed(3)}КК`);
+    resultText += `\n\nAll spent resources:\n• money ${(money / 1e+12).toFixed(3)}T\n• gold ${(gold / 1e+12).toFixed(3)}T\n• oil ${(oil / 1e+9).toFixed(3)}ККК\n• ore ${(ore / 1e+9).toFixed(3)}ККК\n• diamonds ${(diamonds / 1e+3).toFixed(3)}К\n• uranium ${(uranium / 1e+6).toFixed(3)}КК`;
 
     return { money: money, gold: gold, oil: oil, ore: ore, uranium: uranium, diamonds: diamonds };
 }
