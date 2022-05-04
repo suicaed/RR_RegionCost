@@ -16,7 +16,7 @@
 
 ## Updates
 
-### 15.08.2021
+### 04.05.2022
 **Version 1.0.2** released
 - more stable work for different types of regions;
 - now script is able to see real buildings of regions with low electro level.
