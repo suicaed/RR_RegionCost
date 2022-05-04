@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RR Region Cost
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
+// @version      1.0.3
 // @description
 // @author       suicaed
 // @updateURL    https://github.com/suicaed/RR_RegionCost/raw/main/script.user.js
@@ -17,8 +17,8 @@ const INDEX_ORE = 4;
 const INDEX_URANIUM = 11;
 const INDEX_DIAMONDS = 15;
 
-let resultTextTemplate = 'RR_RegionCost by suicaed v1.0.1\n\n';
-let resultText = 'RR_RegionCost by suicaed v1.0.1\n\n';
+let resultTextTemplate = 'RR_RegionCost by suicaed v1.0.3\n\n';
+let resultText = 'RR_RegionCost by suicaed v1.0.3\n\n';
 
 (function () {
     'use strict';
@@ -112,6 +112,14 @@ async function getMarketPrice(index) {
     return Number(average);
 }
 
+function getBuildingCount(container, buildingName) {
+    const regEx = new RegExp(`${buildingName}\\: (?<current>\\d+)(\\/)*(?<real>\\d+)*`);
+    const buildingMatch = container.match(regEx);
+    const buildingCount = buildingMatch?.groups?.real || buildingMatch?.groups?.current || 0;
+
+    return buildingCount;
+}
+
 function calcResources() {
     let money = 0;
     let gold = 0;
@@ -122,37 +130,18 @@ function calcResources() {
 
     const wrapper = document.querySelector('.slide_profile_photo').innerHTML;
 
-    const hospitalMatch = wrapper.match(/Госпиталь\: (?<hospitalCurrent>\d+)(\/)*(?<hospitalReal>\d+)*/);
-    const hospitalCount = hospitalMatch?.groups?.hospitalReal || hospitalMatch?.groups?.hospitalCurrent || 0;
+    const hospitalCount = getBuildingCount(wrapper, 'Госпиталь');
+    const mbaseCount = getBuildingCount(wrapper, 'Военная база');
+    const schoolCount = getBuildingCount(wrapper, 'Школа');
+    const missileCount = getBuildingCount(wrapper, 'ПВО');
+    const portCount = getBuildingCount(wrapper, 'Порт');
+    const electroCount = getBuildingCount(wrapper, 'Электростанция');
+    const cosmoCount = getBuildingCount(wrapper, 'Космодром');
+    const aeroCount = getBuildingCount(wrapper, 'Аэропорт');
+    const hfoundCount = getBuildingCount(wrapper, 'Жилой фонд');
+    const gasCount = getBuildingCount(wrapper, 'Заправочная станция');
 
-    const mbaseMatch = wrapper.match(/Военная база\: (?<mbaseCurrent>\d+)(\/)*(?<mbaseReal>\d+)*/);
-    const mbaseCount = mbaseMatch?.groups?.mbaseReal || mbaseMatch?.groups?.mbaseCurrent || 0;
-
-    const schoolMatch = wrapper.match(/Школа\: (?<schoolCurrent>\d+)(\/)*(?<schoolReal>\d+)*/);
-    const schoolCount = schoolMatch?.groups?.schoolReal || schoolMatch?.groups?.schoolCurrent || 0;
-
-    const missileMatch = wrapper.match(/ПВО\: (?<missileCurrent>\d+)(\/)*(?<missileReal>\d+)*/);
-    const missileCount = missileMatch?.groups?.missileReal || missileMatch?.groups?.missileCurrent || 0;
-
-    const portMatch = wrapper.match(/Порт\: (?<portCurrent>\d+)(\/)*(?<portReal>\d+)*/);
-    const portCount = portMatch?.groups?.portReal || portMatch?.groups?.portCurrent || 0;
-
-    const electroMatch = wrapper.match(/Электростанция\: (?<electroCurrent>\d+)(\/)*(?<electroReal>\d+)*/);
-    const electroCount = electroMatch?.groups?.electroReal || electroMatch?.groups?.electroCurrent || 0;
-
-    const cosmoMatch = wrapper.match(/Космодром\: (?<cosmoCurrent>\d+)(\/)*(?<cosmoReal>\d+)*/);
-    const cosmoCount = cosmoMatch?.groups?.cosmoReal || cosmoMatch?.groups?.cosmoCurrent || 0;
-
-    const aeroMatch = wrapper.match(/Аэропорт\: (?<aeroCurrent>\d+)(\/)*(?<aeroReal>\d+)*/);
-    const aeroCount = aeroMatch?.groups?.aeroReal || aeroMatch?.groups?.aeroCurrent || 0;
-
-    const hfoundMatch = wrapper.match(/Жилой фонд\: (?<hfoundCurrent>\d+)(\/)*(?<hfoundReal>\d+)*/);
-    const hfoundCount = hfoundMatch?.groups?.hfoundReal || hfoundMatch?.groups?.hfoundCurrent || 0;
-
-    const gasMatch = wrapper.match(/Заправочная станция\: (?<gasCurrent>\d+)(\/)*(?<gasReal>\d+)*/);
-    const gasCount = gasMatch?.groups?.gasReal || gasMatch?.groups?.gasCurrent || 0;
-
-    resultText += `Region buildings:\n• hospital ${hospitalCount}\n• military base ${mbaseCount} \n• school ${schoolCount} \n• missile ${missileCount}\n• port ${portCount}\n• powerplant ${electroCount}\n• cosmodrome ${cosmoCount}\n• aeroport ${aeroCount}\n• house found ${hfoundCount}`;
+    resultText += `Region buildings:\n• hospital ${hospitalCount}\n• military base ${mbaseCount} \n• school ${schoolCount} \n• missile ${missileCount}\n• port ${portCount}\n• powerplant ${electroCount}\n• cosmodrome ${cosmoCount}\n• aeroport ${aeroCount}\n• house found ${hfoundCount}\n• gas station ${gasCount} (not calculating yet)`;
 
     for (let i = 1; i <= hospitalCount; i++) {
         money += Math.round(Math.pow(i * 300, 1.5));

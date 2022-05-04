@@ -1,4 +1,4 @@
-# Rival Regions Region Cost by suicaed
+# Region Cost by suicaed
 ### Warning! Working now only with Russian interface.
 
 ## Setup
@@ -15,6 +15,10 @@
 ## To donate on cigarettes: [click](https://rivalregions.com/#slide/profile/527398566)
 
 ## Updates
+
+### 05.05.2022
+**Version 1.0.3** released
+- refactoring: less code and copypast.
 
 ### 04.05.2022
 **Version 1.0.2** released
