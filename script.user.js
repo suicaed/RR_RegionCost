@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         RR Region Cost
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description
 // @author       suicaed
 // @updateURL    https://github.com/suicaed/RR_RegionCost/raw/main/script.user.js
@@ -122,41 +122,60 @@ function calcResources() {
 
     const wrapper = document.querySelector('.slide_profile_photo').innerHTML;
 
-    const hospital = wrapper.match(/Госпиталь\: (?<hospital>\d+)/).groups.hospital;
-    const mbase = wrapper.match(/Военная база\: (?<mbase>\d+)/).groups.mbase;
-    const school = wrapper.match(/Школа\: (?<school>\d+)/).groups.school;
-    const missile = wrapper.match(/ПВО\: (?<missile>\d+)/) ? wrapper.match(/ПВО\: (?<missile>\d+)/).groups.missile : 0;
-    const port = wrapper.match(/Порт\: (?<port>\d+)/) ? wrapper.match(/Порт\: (?<port>\d+)/).groups.port : 0;
-    const electro = wrapper.match(/Электростанция\: (?<electro>\d+)/).groups.electro;
-    const cosmo = wrapper.match(/Космодром\: (?<cosmo>\d+)/).groups.cosmo;
-    const aero = wrapper.match(/Аэропорт\: (?<aero>\d+)/) ? wrapper.match(/Аэропорт\: (?<aero>\d+)/).groups.aero : 0;
-    const hfound = wrapper.match(/Жилой фонд\: (?<hfound>\d+)/).groups.hfound;
-    const gas = wrapper.match(/Заправочная станция\: (?<gas>\d+)/) ? wrapper.match(/Заправочная станция\: (?<aero>\d+)/).groups.gas : 0;
+    const hospitalMatch = wrapper.match(/Госпиталь\: (?<hospitalCurrent>\d+)(\/)*(?<hospitalReal>\d+)*/);
+    const hospitalCount = hospitalMatch?.groups?.hospitalReal || hospitalMatch?.groups?.hospitalCurrent || 0;
 
-    resultText += `Region buildings:\n• hospital ${hospital}\n• military base ${mbase} \n• school ${school} \n• missile ${missile}\n• port ${port}\n• powerplant ${electro}\n• cosmodrome ${cosmo}\n• aeroport ${aero}\n• house found ${hfound}`;
+    const mbaseMatch = wrapper.match(/Военная база\: (?<mbaseCurrent>\d+)(\/)*(?<mbaseReal>\d+)*/);
+    const mbaseCount = mbaseMatch?.groups?.mbaseReal || mbaseMatch?.groups?.mbaseCurrent || 0;
 
-    for (let i = 1; i <= hospital; i++) {
+    const schoolMatch = wrapper.match(/Школа\: (?<schoolCurrent>\d+)(\/)*(?<schoolReal>\d+)*/);
+    const schoolCount = schoolMatch?.groups?.schoolReal || schoolMatch?.groups?.schoolCurrent || 0;
+
+    const missileMatch = wrapper.match(/ПВО\: (?<missileCurrent>\d+)(\/)*(?<missileReal>\d+)*/);
+    const missileCount = missileMatch?.groups?.missileReal || missileMatch?.groups?.missileCurrent || 0;
+
+    const portMatch = wrapper.match(/Порт\: (?<portCurrent>\d+)(\/)*(?<portReal>\d+)*/);
+    const portCount = portMatch?.groups?.portReal || portMatch?.groups?.portCurrent || 0;
+
+    const electroMatch = wrapper.match(/Электростанция\: (?<electroCurrent>\d+)(\/)*(?<electroReal>\d+)*/);
+    const electroCount = electroMatch?.groups?.electroReal || electroMatch?.groups?.electroCurrent || 0;
+
+    const cosmoMatch = wrapper.match(/Космодром\: (?<cosmoCurrent>\d+)(\/)*(?<cosmoReal>\d+)*/);
+    const cosmoCount = cosmoMatch?.groups?.cosmoReal || cosmoMatch?.groups?.cosmoCurrent || 0;
+
+    const aeroMatch = wrapper.match(/Аэропорт\: (?<aeroCurrent>\d+)(\/)*(?<aeroReal>\d+)*/);
+    const aeroCount = aeroMatch?.groups?.aeroReal || aeroMatch?.groups?.aeroCurrent || 0;
+
+    const hfoundMatch = wrapper.match(/Жилой фонд\: (?<hfoundCurrent>\d+)(\/)*(?<hfoundReal>\d+)*/);
+    const hfoundCount = hfoundMatch?.groups?.hfoundReal || hfoundMatch?.groups?.hfoundCurrent || 0;
+
+    const gasMatch = wrapper.match(/Заправочная станция\: (?<gasCurrent>\d+)(\/)*(?<gasReal>\d+)*/);
+    const gasCount = gasMatch?.groups?.gasReal || gasMatch?.groups?.gasCurrent || 0;
+
+    resultText += `Region buildings:\n• hospital ${hospitalCount}\n• military base ${mbaseCount} \n• school ${schoolCount} \n• missile ${missileCount}\n• port ${portCount}\n• powerplant ${electroCount}\n• cosmodrome ${cosmoCount}\n• aeroport ${aeroCount}\n• house found ${hfoundCount}`;
+
+    for (let i = 1; i <= hospitalCount; i++) {
         money += Math.round(Math.pow(i * 300, 1.5));
         gold += Math.round(Math.pow(i * 2160, 1.5));
         oil += Math.round(Math.pow(i * 160, 1.5));
         ore += Math.round(Math.pow(i * 90, 1.5));
     }
 
-    for (let i = 1; i <= mbase; i++) {
+    for (let i = 1; i <= mbaseCount; i++) {
         money += Math.round(Math.pow(i * 300, 1.5));
         gold += Math.round(Math.pow(i * 2160, 1.5));
         oil += Math.round(Math.pow(i * 160, 1.5));
         ore += Math.round(Math.pow(i * 90, 1.5));
     }
 
-    for (let i = 1; i <= school; i++) {
+    for (let i = 1; i <= schoolCount; i++) {
         money += Math.round(Math.pow(i * 300, 1.5));
         gold += Math.round(Math.pow(i * 2160, 1.5));
         oil += Math.round(Math.pow(i * 160, 1.5));
         ore += Math.round(Math.pow(i * 90, 1.5));
     }
 
-    for (let i = 1; i <= missile; i++) {
+    for (let i = 1; i <= missileCount; i++) {
         money += Math.round(Math.pow(i * 1000, 1.5));
         gold += Math.round(Math.pow(i * 180, 1.5));
         oil += Math.round(Math.pow(i * 10, 1.5));
@@ -164,7 +183,7 @@ function calcResources() {
         diamonds += Math.round(Math.pow(i * 10, 0.7));
     }
 
-    for (let i = 1; i <= port; i++) {
+    for (let i = 1; i <= portCount; i++) {
         money += Math.round(Math.pow(i * 1000, 1.5));
         gold += Math.round(Math.pow(i * 180, 1.5));
         oil += Math.round(Math.pow(i * 10, 1.5));
@@ -172,7 +191,7 @@ function calcResources() {
         diamonds += Math.round(Math.pow(i * 10, 0.7));
     }
 
-    for (let i = 1; i <= electro; i++) {
+    for (let i = 1; i <= electroCount; i++) {
         money += Math.round(Math.pow(i * 2000, 1.5));
         gold += Math.round(Math.pow(i * 90, 1.5));
         oil += Math.round(Math.pow(i * 25, 1.5));
@@ -181,7 +200,7 @@ function calcResources() {
         uranium += Math.round(Math.pow(i * 20, 1.5));
     }
 
-    for (let i = 1; i <= cosmo; i++) {
+    for (let i = 1; i <= cosmoCount; i++) {
         money += Math.round(Math.pow(i * 6000, 1.5));
         gold += Math.round(Math.pow(i * 180, 1.5));
         oil += Math.round(Math.pow(i * 30, 1.5));
@@ -190,7 +209,7 @@ function calcResources() {
         uranium += Math.round(Math.pow(i * 30, 1.5));
     }
 
-    for (let i = 1; i <= aero; i++) {
+    for (let i = 1; i <= aeroCount; i++) {
         money += Math.round(Math.pow(i * 1000, 1.5));
         gold += Math.round(Math.pow(i * 180, 1.5));
         oil += Math.round(Math.pow(i * 10, 1.5));
@@ -198,7 +217,7 @@ function calcResources() {
         diamonds += Math.round(Math.pow(i * 10, 0.7));
     }
 
-    for (let i = 1; i <= hfound; i++) {
+    for (let i = 1; i <= hfoundCount; i++) {
         money += Math.round(Math.pow(i * 30, 1.5));
         gold += Math.round(Math.pow(i * 216, 1.5));
         oil += Math.round(Math.pow(i * 16, 1.5));

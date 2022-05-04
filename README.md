@@ -17,6 +17,11 @@
 ## Updates
 
 ### 15.08.2021
+**Version 1.0.2** released
+- more stable work for different types of regions;
+- now script is able to see real buildings of regions with low electro level.
+
+### 15.08.2021
 **Version 1.0.1** released
 - now script works on page load;
 - price is outputted in browser's dialog window instead of console;
